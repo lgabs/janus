@@ -25,7 +25,7 @@ st.markdown(
 # 📊 A/B Testing App
 
 This is a tool to automate your decisions in an A/B Test Experiment with two alternatives, where 
-you want to know which one is better¹. It is focused on conversion and revenue evaluation, typical in e-commerce.
+you want to know which one is better¹. It is focused on conversion and revenue evaluation, typical in e-commerce. It uses Bayesian Statistics to achieve faster and more insightful results².
 
 ## How to use
 
@@ -34,4 +34,5 @@ There are two ways of using: using a CSV with one participant per row or a CSV w
 ¹ To analyze more than one alternative, you can approximately compare 
 them two by two, but avoid this with more than 3. We're working on this feature in the roadmap.
 
+² See references and more at my [github](https://github.com/lgabs/janus)
 """)
