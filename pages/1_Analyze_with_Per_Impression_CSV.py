@@ -13,10 +13,6 @@ from janus.stats.experiment import Experiment, Variant
 
 from utils import save_results_in_session_state
 
-# Delete all the items in Session state
-for key in st.session_state.keys():
-    del st.session_state[key]
-
 st.markdown(
     """
 # 📊 A/B Testing using per-participant CSV
@@ -46,6 +42,7 @@ ab_default = None
 
 # If CSV is not uploaded and checkbox is filled, use values from the example file
 # and pass them down to the next if block
+logging.info(f"Using example file: {use_example_file}...")
 if use_example_file:
     uploaded_file = "examples/results_per_user.csv"
     ab_default = ["alternative"]
@@ -81,6 +78,7 @@ if uploaded_file:
         submit_button = st.form_submit_button(label="Run Experiment")
 
     if submit_button:
+        logging.info("Running Experiment...")
         if not label_values:
             st.warning(
                 "Please select both an **treatment column** and a **Result column**."
