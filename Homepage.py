@@ -34,5 +34,5 @@ There are two ways of using: using a CSV with one participant per row or a CSV w
 ¹ To analyze more than one alternative, you can approximately compare 
 them two by two, but avoid this with more than 3. We're working on this feature in the roadmap.
 
-² See references and more at my [github](https://github.com/lgabs/janus)
+² See references and more at my [github](https://github.com/lgabs/janus).
 """)
