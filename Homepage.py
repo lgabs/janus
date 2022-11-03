@@ -29,7 +29,7 @@ you want to know which one is better¹. It is focused on conversion and revenue 
 
 No sample size is obligatory, but it is good to estimate it before running your test to have a feel if you can achieve it approximately.
 
-The engine is more powerful than common online websites becasue it measures statistics for 3 variables: 
+The engine is more powerful than common online websites becasue it measures statistics for 3 variables at once: 
 - conversion rate
 - monetary value for conversions (e.g. revenue) 
 - average value per impression (e.g. Average Revenue per User)
