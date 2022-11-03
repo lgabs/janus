@@ -14,20 +14,15 @@ from janus.utils.make_dataframe_multivariate import create_per_user_dataframe_mu
 
 from utils import save_results_in_session_state
 
+st.set_page_config(
+    page_title=" A/B Testing using summary information", page_icon="📊"
+)
+
 st.markdown(
     """
-# 📊 A/B Testing using summary CSV
+# 📊 A/B Testing using summary information
 
-This approach uses a CSV with summary results per day, week or any period (see example below in _Use example CSV_). This is suitable for cases
-where you only have access to gross results per day/week/periods. With your CSV, we'll simulate a dataset with one row per impression
-with results equivalent to your data and the apply our statistical engine.
-
-The CSV must have these at least these columns:
-- **alternative (string or integer)**: which alternative the participant got exposured.
-- **exposure_period (string):** period (e.g day, week etc)
-- **exposures (integer):** how many impressions the alternative had in that period.
-- **conversions (integer):** number of conversions
-- **value (float):** value from conversions in that period. You can choose it in the form below, so the column name can be different. This can actually be any monetary value from conversions, typically it is _revenue_. But it can be other examples like cost, return etc.
+This is the most simple approach to analyze your A/B Test. Just input the information and wait for calculations.
 """
 )
 

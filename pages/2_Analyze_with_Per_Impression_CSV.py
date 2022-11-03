@@ -13,6 +13,10 @@ from janus.stats.experiment import Experiment, Variant
 
 from utils import save_results_in_session_state
 
+st.set_page_config(
+    page_title="A/B Testing using per-participant CSV", page_icon="📊"
+)
+
 st.markdown(
     """
 # 📊 A/B Testing using per-participant CSV
