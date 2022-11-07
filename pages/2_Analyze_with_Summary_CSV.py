@@ -83,7 +83,7 @@ if uploaded_file:
             st.stop()
 
         # choose conversion boolean col
-        conversion_bool_col = st.multiselect(
+        conversion_bool_col = st.selectbox(
             "Column with boolean indicator of conversions",
             options=[
                 c
@@ -91,7 +91,6 @@ if uploaded_file:
                 if c not in [label_values, "exposure_period", "exposures"]
             ],
             help="Select which column refers to number of conversions.",
-            default="conversions",
         )
 
         # choose conversion value col
@@ -100,9 +99,9 @@ if uploaded_file:
             options=[
                 c
                 for c in df.columns
-                if c not in [label_values, "sales", "exposure_period", "exposures"]
+                if c not in [label_values, "sales", "exposure_period", "exposures", "conversions"]
             ],
-            help="Select which column refers to the value that comes from conversions.",
+            help="Select which column refers to the value that comes from conversions, e.g.: revenue or cost from conversons.",
         )
 
         submit_button = st.form_submit_button(label="Continue")
@@ -121,13 +120,13 @@ if uploaded_file:
         df_per_user_simulated = create_per_user_dataframe_multivariate(
             df, conversion_value_cols=conversion_value_cols
         )
-        st.markdown(
-            """
-            ### Data Simulated per user preview
-            We use this form as input to our Statistical Engine.
-        """
-        )
-        st.dataframe(df_per_user_simulated.head())
+        # st.markdown(
+        #     """
+        #     ### Data Simulated per user preview
+        #     We use this form as input to our Statistical Engine.
+        # """
+        # )
+        # st.dataframe(df_per_user_simulated.head())
 
         # type(uploaded_file) == str, means the example file was used
         name = (
