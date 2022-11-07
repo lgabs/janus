@@ -29,6 +29,10 @@ make install
 
 And that's it! Now, inside our environment, we can import the `janus` lib inside our scripts with plain `import janus` etc. Try to test using the same code on `experiment_example.ipynb` notebook here or in a plain terminal. 
 
+## Using as an Application
+
+You can use _janus_ as a streamlit product. Just run `make run` and an streamlit app will launch.
+
 
 ## References
 * [What is A/B Testing](https://en.wikipedia.org/wiki/A/B_testing)

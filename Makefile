@@ -17,4 +17,4 @@ types:
 	pytype --keep-going bot
 
 run:
-	python app.py
+	streamlit run Homepage.py
