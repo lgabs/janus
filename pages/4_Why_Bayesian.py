@@ -2,13 +2,12 @@ import streamlit as st
 
 import logging
 
-st.set_page_config(
-    page_title="Why Bayesian?", page_icon="📊"
-)
+st.set_page_config(page_title="Why Bayesian?", page_icon="📊")
 
 logging.basicConfig(level=logging.INFO)
 
-st.markdown("""
+st.markdown(
+    """
 # 📊 Why Bayesian?
 
 This engine is more powerful than common online websites becasue it measures statistics for 3 very important variables at once: 
@@ -22,12 +21,14 @@ These are not usual even in famous tools like [abtestguide](https://abtestguide.
 
 
 See below the main advantages of this method:
-""")
+"""
+)
 
 st.image("stats-differences.png")
 
 
-st.markdown("""
+st.markdown(
+    """
 ## References
 * [What is A/B Testing](https://en.wikipedia.org/wiki/A/B_testing)
 * [Its time to rethink A/B Testing](https://www.gamedeveloper.com/business/it-s-time-to-re-think-a-b-testing)
@@ -43,4 +44,5 @@ st.markdown("""
 
 See more more at my [github](https://github.com/lgabs/janus).
 
-""")
+"""
+)

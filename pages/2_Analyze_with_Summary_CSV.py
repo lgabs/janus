@@ -1,4 +1,3 @@
-  
 import pandas as pd
 import numpy as np
 import scipy.stats
@@ -10,13 +9,13 @@ import logging
 
 import janus
 from janus.stats.experiment import Experiment, Variant
-from janus.utils.make_dataframe_multivariate import create_per_user_dataframe_multivariate
-
-from utils import save_results_in_session_state
-
-st.set_page_config(
-    page_title="A/B Testing using summary CSV", page_icon="📊"
+from janus.utils.make_dataframe_multivariate import (
+    create_per_user_dataframe_multivariate,
 )
+
+from utils import save_results_in_session_state, explain_metrics
+
+st.set_page_config(page_title="A/B Testing using summary CSV", page_icon="📊")
 
 st.markdown(
     """
@@ -51,7 +50,7 @@ if use_example_file:
 
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
-    df['exposure_period'] = pd.to_datetime(df.exposure_period)
+    df["exposure_period"] = pd.to_datetime(df.exposure_period)
 
     st.markdown("### Data preview")
     st.dataframe(df.head())
@@ -77,22 +76,35 @@ if uploaded_file:
                 control, treatment = treatment, control
             visitors_a = df[label_values].value_counts()[control]
             visitors_b = df[label_values].value_counts()[treatment]
+        else:
+            st.warning(
+                "Please select both an **treatment column** and a **Result column**."
+            )
+            st.stop()
 
         # choose conversion boolean col
         conversion_bool_col = st.multiselect(
             "Column with boolean indicator of conversions",
-            options=[c for c in df.columns if c not in [label_values, 'exposure_period', 'exposures']],
+            options=[
+                c
+                for c in df.columns
+                if c not in [label_values, "exposure_period", "exposures"]
+            ],
             help="Select which column refers to number of conversions.",
-            default="conversions"
+            default="conversions",
         )
 
         # choose conversion value col
         conversion_value_cols = st.multiselect(
             "Column with value from conversions",
-            options=[c for c in df.columns if c not in [label_values, 'sales', 'exposure_period', 'exposures']],
+            options=[
+                c
+                for c in df.columns
+                if c not in [label_values, "sales", "exposure_period", "exposures"]
+            ],
             help="Select which column refers to the value that comes from conversions.",
         )
-        
+
         submit_button = st.form_submit_button(label="Continue")
 
     if submit_button:
@@ -101,46 +113,54 @@ if uploaded_file:
         logging.info(f"conversion_bool_col: {conversion_bool_col}")
         logging.info(f"conversion_value_col: {conversion_value_cols}")
 
-        df = df.rename(columns={
-            conversion_bool_col: 'conversions',
-            })
-        df_per_user_simulated = create_per_user_dataframe_multivariate(df, conversion_value_cols=conversion_value_cols)
-        st.markdown("""
+        df = df.rename(
+            columns={
+                conversion_bool_col: "conversions",
+            }
+        )
+        df_per_user_simulated = create_per_user_dataframe_multivariate(
+            df, conversion_value_cols=conversion_value_cols
+        )
+        st.markdown(
+            """
             ### Data Simulated per user preview
             We use this form as input to our Statistical Engine.
-        """)
+        """
+        )
         st.dataframe(df_per_user_simulated.head())
-
-        if not label_values:
-            st.warning(
-                "Please select both an **treatment column** and a **Result column**."
-            )
-            st.stop()
 
         # type(uploaded_file) == str, means the example file was used
         name = (
-            "dataset_summary.csv" if isinstance(uploaded_file, str) else uploaded_file.name
+            "dataset_summary.csv"
+            if isinstance(uploaded_file, str)
+            else uploaded_file.name
         )
         experiment_name = name.split(".")[0]
 
         # Initialize Experiment
         with st.spinner(f"Analyzing Experiment for CSV '{name}'..."):
             # fix cols names
-            df_per_user_simulated = df_per_user_simulated.rename(columns={'converted': 'sales'}) # hacking, sales are generic conversions in janus lib
+            df_per_user_simulated = df_per_user_simulated.rename(
+                columns={"converted": "sales"}
+            )  # hacking, sales are generic conversions in janus lib
             experiment = Experiment(
                 name=experiment_name,
                 keymetrics=["conversion", "revenue", "arpu"],
                 baseline_variant_name=control,
             )
             experiment.run_experiment(df_results_per_user=df_per_user_simulated)
-            save_results_in_session_state(experiment, control_label=control, treatment_label=treatment)
+            save_results_in_session_state(
+                experiment, control_label=control, treatment_label=treatment
+            )
 
         # Show Results in dataframe form v0
         st.write("## Summary Results")
-        _df = pd.DataFrame.from_dict(experiment.results).drop('statistics').T
+        _df = pd.DataFrame.from_dict(experiment.results).drop("statistics").T
         st.dataframe(data=_df)
 
         st.write("## Statistical Results")
+        explain_metrics()
+
         st.write("### Control")
         st.dataframe(data=pd.DataFrame.from_dict(st.session_state.control_stats))
 

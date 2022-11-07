@@ -1,4 +1,3 @@
-  
 import pandas as pd
 import numpy as np
 import scipy.stats
@@ -11,11 +10,9 @@ import logging
 import janus
 from janus.stats.experiment import Experiment, Variant
 
-from utils import save_results_in_session_state
+from utils import save_results_in_session_state, explain_metrics
 
-st.set_page_config(
-    page_title="A/B Testing using per-participant CSV", page_icon="📊"
-)
+st.set_page_config(page_title="A/B Testing using per-participant CSV", page_icon="📊")
 
 st.markdown(
     """
@@ -91,7 +88,9 @@ if uploaded_file:
 
         # type(uploaded_file) == str, means the example file was used
         name = (
-            "Website_Results.csv" if isinstance(uploaded_file, str) else uploaded_file.name
+            "Website_Results.csv"
+            if isinstance(uploaded_file, str)
+            else uploaded_file.name
         )
         experiment_name = name.split(".")[0]
 
@@ -103,18 +102,20 @@ if uploaded_file:
                 baseline_variant_name=control,
             )
             experiment.run_experiment(df_results_per_user=df)
-            save_results_in_session_state(experiment, control_label=control, treatment_label=treatment)
+            save_results_in_session_state(
+                experiment, control_label=control, treatment_label=treatment
+            )
 
         # Show Results in dataframe form v0
         st.write("## Summary Results")
-        _df = pd.DataFrame.from_dict(experiment.results).drop('statistics').T
+        _df = pd.DataFrame.from_dict(experiment.results).drop("statistics").T
         st.dataframe(data=_df)
 
         st.write("## Statistical Results")
+        explain_metrics()
+        
         st.write("### Control")
         st.dataframe(data=pd.DataFrame.from_dict(st.session_state.control_stats))
 
         st.write("### Treatment")
         st.dataframe(data=pd.DataFrame.from_dict(st.session_state.treatment_stats))
-
-

@@ -26,9 +26,9 @@ def create_per_user_dataframe_multivariate(
         "conversions",
     ] + conversion_value_cols
 
-    assert set(
-        ALLOWED_COLS
-    ).issubset(set(df_summary_daily.columns)), f"Use allowed cols plus 'conversion_value_cols': {ALLOWED_COLS}. Your cols are: {list(df_summary_daily.columns)}"
+    assert set(ALLOWED_COLS).issubset(
+        set(df_summary_daily.columns)
+    ), f"Use allowed cols plus 'conversion_value_cols': {ALLOWED_COLS}. Your cols are: {list(df_summary_daily.columns)}"
 
     df = pd.DataFrame(
         columns=[
