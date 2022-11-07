@@ -57,12 +57,12 @@ if uploaded_file:
 
     st.markdown("### Select columns for analysis:")
     with st.form(key="my_form"):
-        label_values = st.multiselect(
+        label_values = st.selectbox(
             "Column with alternative labels",
             options=df.columns,
             help="Select which column refers to your A/B testing labels.",
-            default=ab_default,
-        )[0]
+        )
+        logging.info(f"label_values: {label_values}")
         if label_values:
             logging.info(f"alternatives: {df[label_values].unique()}")
             control = df[label_values].unique()[0]
