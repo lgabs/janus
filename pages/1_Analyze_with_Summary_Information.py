@@ -21,8 +21,6 @@ st.markdown(
     """
 # 📊 A/B Testing using Summary Information
 
-**[Page in construction]**
-
 This is the most simple approach to analyze your A/B Test. Just input these summary information and wait for calculations:
 
 - **total impressions in control/treatment**: total of participants in each variant.
