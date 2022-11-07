@@ -21,7 +21,7 @@ st.markdown(
 This way of analyzing uses a CSV with one participant per row.You can upload your experiment results in CSV format to see with significance which alternative has more probability of being the best.
 The CSV should have one row per exposure, e.g., one row per participant user. 
 
-First row must be headers and the next rows must contain these columns:
+The CSV **must be separated only by commas** and must have these at least these columns:
 - **id (string or integer)**: any unique id or unique label.
 - **alternative (string or integer)**: which alternative the participant got exposured.
 - **revenue (float)**: total quantity value for conversions (e.g.: money).
@@ -113,7 +113,7 @@ if uploaded_file:
 
         st.write("## Statistical Results")
         explain_metrics()
-        
+
         st.write("### Control")
         st.dataframe(data=pd.DataFrame.from_dict(st.session_state.control_stats))
 

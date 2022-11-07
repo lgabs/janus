@@ -24,7 +24,7 @@ st.markdown(
 This approach uses a CSV with summary results per day, week or any period (see example below in _Use example CSV_). This is suitable for cases
 where you only have access to gross results per day/week/periods. If you just have data for the whole experiment, check the page 'Analyze with Summary Information' page.
 
-The CSV must have these at least these columns:
+The CSV **must be separated only by commas** and must have these at least these columns:
 - **alternative (string or integer)**: which alternative the participant got exposured.
 - **exposure_period (string):** period (e.g day, week etc)
 - **exposures (integer):** how many impressions the alternative had in that period.
