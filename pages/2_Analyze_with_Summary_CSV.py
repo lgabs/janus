@@ -99,7 +99,14 @@ if uploaded_file:
             options=[
                 c
                 for c in df.columns
-                if c not in [label_values, "sales", "exposure_period", "exposures", "conversions"]
+                if c
+                not in [
+                    label_values,
+                    "sales",
+                    "exposure_period",
+                    "exposures",
+                    "conversions",
+                ]
             ],
             help="Select which column refers to the value that comes from conversions, e.g.: revenue or cost from conversons.",
         )
