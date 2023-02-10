@@ -42,7 +42,9 @@ with st.form(key="my_form"):
     )
     control_total_value = st.number_input(
         label="Total Conversion Value in Control",
-        value=200,
+        value=200.0,
+        step=1.,
+        format="%.4f"
     )
 
     # Treatment
@@ -56,7 +58,9 @@ with st.form(key="my_form"):
     )
     test_total_value = st.number_input(
         label="Total Conversion Value in Treatment",
-        value=250,
+        value=250.00,
+        step=1.,
+        format="%.4f"
     )
 
     experiment_name = st.text_input(label='Experiment Name (Optional)', value='My Experiment')
