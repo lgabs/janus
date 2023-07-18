@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import scipy.stats
 from scipy.stats import norm
-import altair as alt
 
 import janus
 from janus.stats.experiment import Experiment, Variant

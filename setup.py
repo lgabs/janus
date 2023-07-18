@@ -9,9 +9,8 @@ setup(
     license="",
     install_requires=[
         "pandas==1.2.5",
-        "numpy==1.19.1",
-        "scipy==1.5.2",
-        "pyspark==3.0.0",
+        "numpy==1.25.1",
+        "scipy==1.11.1",
     ],
     setup_requires=["pytest-runner"],
     tests_require=["pytest==4.4.1"],
