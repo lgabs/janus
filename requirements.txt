@@ -1,4 +1,4 @@
 pandas==1.2.5
-numpy==1.16.5
+numpy==1.25.1
 scipy==1.11.1
 streamlit==1.13.0
