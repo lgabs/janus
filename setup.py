@@ -8,7 +8,7 @@ setup(
     author="Luan Fernandes",
     license="",
     install_requires=[
-        "pandas==0.25.3",
+        "pandas==1.2.5",
         "numpy==1.19.1",
         "scipy==1.5.2",
         "pyspark==3.0.0",
