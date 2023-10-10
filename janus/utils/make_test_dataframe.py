@@ -11,7 +11,6 @@ def createTestDataFrame(
     average_ticket_baseline: float,
     average_ticket_alternative: float,
 ):
-
     # testes antes de começar função:
     # TODO: 1. nenhum parâmetro nulo
     # TODO: 2. todos os tipos estão certos

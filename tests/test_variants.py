@@ -9,8 +9,7 @@ class VariantTestCase(unittest.TestCase):
         self.assertEqual(variant.name, "A")
 
     def test_consolidate_results(self):
-
-        results_per_user = pd.read_csv("tests/results_per_user.csv")
+        results_per_user = pd.read_csv("examples/results_per_user.csv")
         variant_results = {
             "A": {
                 "users": 6,

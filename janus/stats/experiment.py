@@ -105,7 +105,6 @@ class Variant:
     def calculate_bootstrap(
         self, metric_name: str, eval_function=get_bootstraped_mean, spark_session=None
     ):
-
         if metric_name == "revenue":
             data = list(self.variant_df.query("sales == 1")["revenue"])
         elif metric_name == "conversion":
@@ -143,7 +142,6 @@ class Experiment:
         self.results = {}
 
     def run_experiment(self, df_results_per_user: pd.DataFrame):
-
         logging.info(f"INITIALIZING experiment '{self.name}' evaluation...")
         variant_names = list(df_results_per_user.alternative.unique())
         assert (
@@ -201,7 +199,6 @@ class Experiment:
             variant1.calculate_probabilities(variant2, metric_name)
 
     def consolidate_results(self, variantA: Variant, variantB: Variant):
-
         for variant_interest, variant_other in zip(
             (variantA, variantB), (variantB, variantA)
         ):
