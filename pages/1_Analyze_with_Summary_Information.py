@@ -40,10 +40,7 @@ with st.form(key="my_form"):
         value=100,
     )
     control_total_value = st.number_input(
-        label="Total Conversion Value in Control",
-        value=200.0,
-        step=1.,
-        format="%.4f"
+        label="Total Conversion Value in Control", value=200.0, step=1.0, format="%.4f"
     )
 
     # Treatment
@@ -58,11 +55,13 @@ with st.form(key="my_form"):
     test_total_value = st.number_input(
         label="Total Conversion Value in Treatment",
         value=250.00,
-        step=1.,
-        format="%.4f"
+        step=1.0,
+        format="%.4f",
     )
 
-    experiment_name = st.text_input(label='Experiment Name (Optional)', value='My Experiment')
+    experiment_name = st.text_input(
+        label="Experiment Name (Optional)", value="My Experiment"
+    )
 
     submit_button = st.form_submit_button(label="Run Experiment")
 
@@ -83,7 +82,7 @@ if submit_button:
     df_per_user_simulated = create_per_user_dataframe_multivariate(
         df, conversion_value_cols=conversion_value_cols
     )
-    
+
     # st.write("df")
     # st.dataframe(df)
     # st.write("df_per_user_simulated")
@@ -95,16 +94,16 @@ if submit_button:
         # TODO: generalize this code for all pages and generalize
         # lib's revenue col to monetary values
         df_per_user_simulated = df_per_user_simulated.rename(
-            columns={"converted": "sales", "total_value": 'revenue'}
+            columns={"converted": "sales", "total_value": "revenue"}
         )  # hacking, sales are generic conversions in janus lib
         experiment = Experiment(
             name=experiment_name,
             keymetrics=["conversion", "revenue", "arpu"],
-            baseline_variant_name='control',
+            baseline_variant_name="control",
         )
         experiment.run_experiment(df_results_per_user=df_per_user_simulated)
         save_results_in_session_state(
-            experiment, control_label='control', treatment_label='treatment'
+            experiment, control_label="control", treatment_label="treatment"
         )
 
         # Show Results in dataframe form v0
@@ -120,4 +119,3 @@ if submit_button:
 
         st.write("### Treatment")
         st.dataframe(data=pd.DataFrame.from_dict(st.session_state.treatment_stats))
-

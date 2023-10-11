@@ -6,7 +6,7 @@ install-lib:
 	python setup.py bdist_wheel
 	pip3 install --force-reinstall  dist/**.whl
 
-tests:
+test:
 	python -m unittest discover
 
 lint:

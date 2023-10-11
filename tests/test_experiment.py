@@ -23,7 +23,7 @@ class ExperimentTestCase(unittest.TestCase):
         }
         experiment = Experiment(**args)
 
-        df_results_per_user = pd.read_csv("tests/results_per_user.csv")
+        df_results_per_user = pd.read_csv("examples/results_per_user.csv")
         with self.assertRaises(AssertionError):
             experiment.run_experiment(df_results_per_user=df_results_per_user)
 
