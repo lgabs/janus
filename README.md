@@ -10,6 +10,8 @@ Janus is an A/B Test Engine to be used in a variety use cases, especially to mea
 
 This library came as an ideia of separate the statistical calculations in A/B Tests from other code that is typically used to manage tests and execute queries over the company's database, and hence usually carry proprietary code and even business logic, which should not be open sourced. There was the bud to build this library and get it open sourced.
 
+Checkout the [streamlit app](https://lgabs-janus-homepage-31diny.streamlit.app/) from this repo.
+
 ## Installation
 
 Open a terminal, clone this repository into your machine and stay into the project directory.
