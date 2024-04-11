@@ -223,12 +223,19 @@ class Experiment:
                 variant_interest.users + variant_other.users
             )
             for metric in self.keymetrics:
+                print("metric: ", metric)
+                if metric == "revenue":
+                    # for variances, revenue modelling is the ticket
+                    # this is a confusion to be fixed in the future
+                    _metric = "ticket"
+                else: 
+                    _metric = metric
+                interest_value = getattr(variant_interest, _metric)
+                other_value = getattr(variant_other, _metric)
                 results["statistics"][metric]["lift"] = get_lift(
-                    getattr(variant_interest, metric), getattr(variant_other, metric)
+                    interest_value, other_value
                 )
-                results["statistics"][metric]["diff"] = getattr(
-                    variant_interest, metric
-                ) - getattr(variant_other, metric)
+                results["statistics"][metric]["diff"] = interest_value - other_value
 
             self.results[variant_interest.name] = results
 
