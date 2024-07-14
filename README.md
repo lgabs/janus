@@ -1,9 +1,12 @@
-![janus](janus.jpg)
 # Janus
 
 ![License2](https://img.shields.io/github/license/lgabs/janus)
 ![Python Version](https://img.shields.io/badge/python-3.7%20%7C%203.8-brightgreen.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+> **Warning**
+> We're making a major breaking change in the project to use the [bayesian-testing](https://github.com/Matt52/bayesian-testing) library for better experiment management, and a full stack application will be developed to build a website for Janus.
+> Please, consider using the distributed [package in pypi](https://pypi.org/project/janus-web-ab-testing/), which comes from the `evolve-janus-backend` branch.
 
 
 Janus is an A/B Test Engine to be used in a variety use cases, especially to measure conversion, ticket and ARPU difference between variants, i.e, typical metrics for tests in marketplaces. The engine name is an analogy to _Janus_, the god of changes and transitions.
