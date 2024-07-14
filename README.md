@@ -8,8 +8,7 @@ Janus is a simple and easy A/B Test Calculator that allows you to run A/B tests 
 
 It's developed mainly for website experiments. While many calculators only account for conversion analysis and consider only two variants, Janus allows multivariant tests and measure _Conversion_, _Averge Ticket_ and _Average Revenue Per User (ARPU)_ over variants, i.e, typical metrics for tests in marketplaces. 
 
-The engine name is an analogy to _Janus_, the god of changes and transitions.
-
+The engine name is an analogy to _Janus_, the god of changes and transitions. 
 
 ## Installation
 
@@ -50,6 +49,10 @@ My plan is to build a website to showcase the Janus library and to provide a sim
 - build a backend with FastAPI using the library
 - build a frontend (JavaScript maybe)
 - deploy the website
+
+> **Warning**
+> The distributed package is from this branch, which will be merged to `main` in the first release of this project. The `main` branch uses another previous approach for the calculations (yet correct), and has a streamlit app to showcase the library.
+> In this branch, however, we'll change the whole project towards not only a library, but also for a full stack application, with frontend and backend.
 
 
 ## References
