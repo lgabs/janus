@@ -12,9 +12,11 @@ from janus.utils.make_dataframe_multivariate import (
     create_per_user_dataframe_multivariate,
 )
 
-from utils import save_results_in_session_state, explain_metrics
+from utils import save_results_in_session_state, explain_metrics, print_warning
 
 st.set_page_config(page_title=" A/B Testing using summary information", page_icon="📊")
+
+print_warning()
 
 st.markdown(
     """

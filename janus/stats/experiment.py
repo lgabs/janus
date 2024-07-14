@@ -228,7 +228,7 @@ class Experiment:
                     # for variances, revenue modelling is the ticket
                     # this is a confusion to be fixed in the future
                     _metric = "ticket"
-                else: 
+                else:
                     _metric = metric
                 interest_value = getattr(variant_interest, _metric)
                 other_value = getattr(variant_other, _metric)

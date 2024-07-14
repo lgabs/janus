@@ -21,3 +21,13 @@ def explain_metrics():
     - **diff**: the observed absolute difference compared to the other variant for each metric.
     """
     )
+
+
+def print_warning():
+    st.warning(
+        """
+    We're making a major breaking change in the project to use the [bayesian-testing](https://github.com/Matt52/bayesian-testing) library for better experiment management, 
+    and a full stack application will be developed to build a website for Janus, so this Streamlit application will be discontinued.
+    Please, consider using the [distributed package in pypi](https://pypi.org/project/janus-web-ab-testing/), which comes from the `evolve-janus-backend` branch.
+    """
+    )

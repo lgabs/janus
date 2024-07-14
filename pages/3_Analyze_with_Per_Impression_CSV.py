@@ -9,9 +9,11 @@ import logging
 import janus
 from janus.stats.experiment import Experiment, Variant
 
-from utils import save_results_in_session_state, explain_metrics
+from utils import save_results_in_session_state, explain_metrics, print_warning
 
 st.set_page_config(page_title="A/B Testing using per-participant CSV", page_icon="📊")
+
+print_warning()
 
 st.markdown(
     """
