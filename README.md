@@ -14,26 +14,43 @@ Checkout the [streamlit app](https://lgabs-janus-homepage-31diny.streamlit.app/)
 
 ## Installation
 
-Open a terminal, clone this repository into your machine and stay into the project directory.
-
-Using a virtual environment is a good practice, but it is optional. If you enjoy it, go ahead and create a virtual environment by typing:
+Janus is distributed in [pypi](https://pypi.org/project/janus-web-ab-testing/). You can install it by using:
 ```
-python3 -m venv venv -r requirements.txt
-```
-Once it is created, you must now activate the environment by using:
-```
-source venv/bin/activate
-```
-Now, you can install our lib (if you are not using virtual env, go straight to this command):
-```
-make install
+pip install janus-web-ab-testing
 ```
 
-And that's it! Now, inside our environment, we can import the `janus` lib inside our scripts with plain `import janus` etc. Try to test using the same code on `experiment_example.ipynb` notebook here or in a plain terminal. 
+You can now run a quick example of a A/B test:
+```
+from janus.variant import Variant
+from janus.experiment import WebsiteExperiment
 
-## Using as an Application
+variant_A = Variant(
+    name="A",
+    impressions=1000, 
+    conversions=100, 
+    revenue=10000
+)
+variant_B = Variant(
+    name="B",
+    impressions=1000, 
+    conversions=120, 
+    revenue=9000
+)
+variants = [variant_A, variant_B]
 
-You can use _janus_ as a streamlit product. Just run `make run` and an streamlit app will launch.
+experiment = WebsiteExperiment(variants, baseline_variant="A")
+experiment.run()
+experiment.print_reports()
+```
+
+See more in the [quickstart notebook](examples/Janus%20Quickstart.ipynb).
+
+## The Janus Website
+
+My plan is to build a website to showcase the Janus library and to provide a simple interface to run A/B tests. However, only the library is almost ready, and the next steps would be:
+- build a backend with FastAPI using the library
+- build a frontend (JavaScript maybe)
+- deploy the website
 
 
 ## References

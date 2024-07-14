@@ -1,10 +1,14 @@
 [tool.poetry]
-name = "janus"
+name = "janus-web-ab-testing"
 version = "0.1.0"
 description = "Janus, an A/B Test Framework."
 authors = ["Luan Fernandes <luangabriel70@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+
+packages = [
+    { include = "janus" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"

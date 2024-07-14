@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 from pprint import pprint
 
+
 class WebsiteExperiment:
     """
     Class to run website experiments from aggregated data.
@@ -26,7 +27,7 @@ class WebsiteExperiment:
         self.variants_results = []
         self.baseline_variant: str = baseline_variant
 
-    def run_conversion_experiment(self, sim_count: int=100_000, show=False):
+    def run_conversion_experiment(self, sim_count: int = 100_000, show=False):
         """
         Run the conversion experiment using Bayesian testing.
 
@@ -36,13 +37,19 @@ class WebsiteExperiment:
         """
         self.conversion_test: BinaryDataTest = BinaryDataTest()
         for v in self.variants:
-            self.conversion_test.add_variant_data_agg(v.name, totals=v.impressions, positives=v.conversions)
+            self.conversion_test.add_variant_data_agg(
+                v.name, totals=v.impressions, positives=v.conversions
+            )
 
         self.conversion_results = self.conversion_test.evaluate()
         if show:
-            print(pd.DataFrame(self.conversion_results).to_markdown(tablefmt="grid", index=False))
+            print(
+                pd.DataFrame(self.conversion_results).to_markdown(
+                    tablefmt="grid", index=False
+                )
+            )
 
-    def run_arpu_experiment(self, sim_count: int=100_000, show=False):
+    def run_arpu_experiment(self, sim_count: int = 100_000, show=False):
         """
         Run the ARPU experiment using Bayesian testing.
 
@@ -54,8 +61,8 @@ class WebsiteExperiment:
         for v in self.variants:
             rev_logs = [np.log(v.revenue / v.conversions)] * v.conversions
             self.arpu_test.add_variant_data_agg(
-                v.name, 
-                totals=v.impressions, 
+                v.name,
+                totals=v.impressions,
                 positives=v.conversions,
                 sum_values=v.revenue,
                 sum_logs=sum(rev_logs),
@@ -64,7 +71,11 @@ class WebsiteExperiment:
 
         self.arpu_results = self.arpu_test.evaluate()
         if show:
-            print(pd.DataFrame(self.arpu_results).to_markdown(tablefmt="grid", index=False))
+            print(
+                pd.DataFrame(self.arpu_results).to_markdown(
+                    tablefmt="grid", index=False
+                )
+            )
 
     def run(self, **kargs):
         """
@@ -76,7 +87,13 @@ class WebsiteExperiment:
         self.run_conversion_experiment(**kargs)
         self.run_arpu_experiment(**kargs)
 
-    def compile_full_data(self, show: bool=False, revenue_precision: int=4, conversion_precision: int=4, probs_precision: int=4):
+    def compile_full_data(
+        self,
+        show: bool = False,
+        revenue_precision: int = 4,
+        conversion_precision: int = 4,
+        probs_precision: int = 4,
+    ):
         """
         Compile full data for all variants and results.
 
@@ -88,44 +105,60 @@ class WebsiteExperiment:
         """
         compiled_res = []
         for v, conv_res, arpu_res in zip(
-            self.variants, 
-            self.conversion_results, 
-            self.arpu_results
+            self.variants, self.conversion_results, self.arpu_results
         ):
             res = {}
             # header info
             res.update({"variant": v.name})
-            res.update({
-                "summary": {
-                "impressions": int(v.impressions),
-                "conversions": int(v.conversions),
-                "revenue": round(v.revenue, revenue_precision),
-                "conversion": round(v.conversions / v.impressions, conversion_precision), 
-                "avg_ticket": round(v.revenue / v.conversions, revenue_precision),
-                "arpu": round(v.revenue / v.impressions, revenue_precision),
+            res.update(
+                {
+                    "summary": {
+                        "impressions": int(v.impressions),
+                        "conversions": int(v.conversions),
+                        "revenue": round(v.revenue, revenue_precision),
+                        "conversion": round(
+                            v.conversions / v.impressions, conversion_precision
+                        ),
+                        "avg_ticket": round(
+                            v.revenue / v.conversions, revenue_precision
+                        ),
+                        "arpu": round(v.revenue / v.impressions, revenue_precision),
+                    }
                 }
-            })
+            )
             # conversion results
-            res.update({
-                "conversion": {
-                "expected_loss": round(conv_res["expected_loss"], conversion_precision),
-                "prob_being_best": round(conv_res["prob_being_best"], probs_precision),
+            res.update(
+                {
+                    "conversion": {
+                        "expected_loss": round(
+                            conv_res["expected_loss"], conversion_precision
+                        ),
+                        "prob_being_best": round(
+                            conv_res["prob_being_best"], probs_precision
+                        ),
+                    }
                 }
-            })
+            )
             # arpu results
-            res.update({
-                "arpu": {
-                "expected_loss": round(arpu_res["expected_loss"], revenue_precision),
-                "prob_being_best": round(arpu_res["prob_being_best"], probs_precision),
+            res.update(
+                {
+                    "arpu": {
+                        "expected_loss": round(
+                            arpu_res["expected_loss"], revenue_precision
+                        ),
+                        "prob_being_best": round(
+                            arpu_res["prob_being_best"], probs_precision
+                        ),
+                    }
                 }
-            })
+            )
             compiled_res.append(res)
-        
+
         self.compiled_res = compiled_res
         if show:
             pprint(compiled_res)
 
-    def get_reports(self, probs_precision: int=4):
+    def get_reports(self, probs_precision: int = 4):
         """
         Generate summary, conversion, and ARPU reports.
 
@@ -140,7 +173,11 @@ class WebsiteExperiment:
         summaries = []
         conv_stats = []
         arpu_stats = []
-        baseline_res = [res for res in self.compiled_res if res.get("variant") == self.baseline_variant][0]
+        baseline_res = [
+            res
+            for res in self.compiled_res
+            if res.get("variant") == self.baseline_variant
+        ][0]
         for variant in self.compiled_res:
             summary = {"variant": variant.get("variant")}
             summary.update(variant.get("summary"))
@@ -148,12 +185,28 @@ class WebsiteExperiment:
 
             conv = {"variant": variant.get("variant")}
             conv.update(variant.get("conversion"))
-            conv.update({"lift": round(summary["conversion"] / baseline_res.get("summary").get("conversion") - 1, probs_precision)})
+            conv.update(
+                {
+                    "lift": round(
+                        summary["conversion"]
+                        / baseline_res.get("summary").get("conversion")
+                        - 1,
+                        probs_precision,
+                    )
+                }
+            )
             conv_stats.append(conv)
 
             arpu = {"variant": variant.get("variant")}
             arpu.update(variant.get("arpu"))
-            arpu.update({"lift": round(summary["arpu"] / baseline_res.get("summary").get("arpu") - 1, probs_precision)})
+            arpu.update(
+                {
+                    "lift": round(
+                        summary["arpu"] / baseline_res.get("summary").get("arpu") - 1,
+                        probs_precision,
+                    )
+                }
+            )
             arpu_stats.append(arpu)
 
         _df_summary = pd.DataFrame(summaries)
@@ -172,27 +225,37 @@ class WebsiteExperiment:
         Print the summary, conversion stats, and ARPU stats reports.
         """
         _df_summary, _df_conv, _df_arpu = self.get_reports()
-        
+
         xlength = len("-----------------") + 11 * len(self.variants)
-        print_header = lambda s: print("-" * int((xlength - len(s))/2) + f" {s} " + "-" * int((xlength - len(s))/2))
+        print_header = lambda s: print(
+            "-" * int((xlength - len(s)) / 2)
+            + f" {s} "
+            + "-" * int((xlength - len(s)) / 2)
+        )
         print_header("Summary")
         print(
             _df_summary.set_index("variant").T.to_markdown(
                 tablefmt="grid",
-                numalign='right', stralign='right', disable_numparse=True
-                )
+                numalign="right",
+                stralign="right",
+                disable_numparse=True,
+            )
         )
         print_header("Conversion Stats")
         print(
             _df_conv.set_index("variant").T.to_markdown(
                 tablefmt="grid",
-                numalign='right', stralign='right', disable_numparse=True
-                )
+                numalign="right",
+                stralign="right",
+                disable_numparse=True,
+            )
         )
         print_header("ARPU Stats")
         print(
             _df_arpu.set_index("variant").T.to_markdown(
                 tablefmt="grid",
-                numalign='right', stralign='right', disable_numparse=True
-                )
+                numalign="right",
+                stralign="right",
+                disable_numparse=True,
+            )
         )
