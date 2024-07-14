@@ -5,12 +5,12 @@
 ![Python Version](https://img.shields.io/badge/python-3.7%20%7C%203.8-brightgreen.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
+Janus is a simple and easy A/B Test Calculator that allows you to run A/B tests and get reports in a few lines of code. 
 
-Janus is an A/B Test Engine to be used in a variety use cases, especially to measure conversion, ticket and ARPU difference between variants, i.e, typical metrics for tests in marketplaces. The engine name is an analogy to _Janus_, the god of changes and transitions.
+It's developed mainly for website experiments. While many calculators only account for conversion analysis and consider only two variants, Janus allows multivariant tests and measure _Conversion_, _Averge Ticket_ and _Average Revenue Per User (ARPU)_ over variants, i.e, typical metrics for tests in marketplaces. 
 
-This library came as an ideia of separate the statistical calculations in A/B Tests from other code that is typically used to manage tests and execute queries over the company's database, and hence usually carry proprietary code and even business logic, which should not be open sourced. There was the bud to build this library and get it open sourced.
+The engine name is an analogy to _Janus_, the god of changes and transitions.
 
-Checkout the [streamlit app](https://lgabs-janus-homepage-31diny.streamlit.app/) from this repo.
 
 ## Installation
 

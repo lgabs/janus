@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "janus-web-ab-testing"
-version = "0.1.0"
+version = "0.1.2"
 description = "Janus, an A/B Test Framework."
 authors = ["Luan Fernandes <luangabriel70@gmail.com>"]
 license = "MIT"
