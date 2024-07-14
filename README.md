@@ -1,4 +1,4 @@
-![janus](janus.jpg)
+![janus](logo.png)
 # Janus
 
 ![License2](https://img.shields.io/github/license/lgabs/janus)
@@ -38,8 +38,7 @@ You can use _janus_ as a streamlit product. Just run `make run` and an streamlit
 
 ## References
 * [What is A/B Testing](https://en.wikipedia.org/wiki/A/B_testing)
-* The bayesian calculations were implemented based on [this VWO white paper](https://cdn2.hubspot.net/hubfs/310840/VWO_SmartStats_technical_whitepaper.pdf)
-* [VWO Website](https://vwo.com/)
+* [VWO paper about bayesian A/B testing](https://vwo.com/downloads/VWO_SmartStats_technical_whitepaper.pdf)
 * [Agile A/B testing with Bayesian Statistics and Python](https://web.archive.org/web/20150419163005/http://www.bayesianwitch.com/blog/2014/bayesian_ab_test.html)
 * [Understanding Bayesian A/B testing (using baseball statistics)](http://varianceexplained.org/r/bayesian_ab_baseball/)
 * [It’s time to re-think A/B testing](https://mobiledevmemo.com/its-time-to-abandon-a-b-testing/)
