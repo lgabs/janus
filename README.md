@@ -81,7 +81,7 @@ And you should see:
 ```
 
 
-See more in the [quickstart notebook](examples/Janus%20Quickstart.ipynb).
+See more in the [quickstart notebook](examples/Janus%20Quickstart.ipynb). The _Average Ticket_ Statistics is still missing, but will be added soon (it's usually modelled with exponential distribution with gamma as prior) 
 
 ## The Janus Website
 
