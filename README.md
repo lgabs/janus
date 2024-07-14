@@ -1,4 +1,3 @@
-![janus](logo.png)
 # Janus
 
 ![License2](https://img.shields.io/github/license/lgabs/janus)
