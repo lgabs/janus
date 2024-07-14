@@ -1,45 +1,63 @@
-![janus](janus.jpg)
 # Janus
 
 ![License2](https://img.shields.io/github/license/lgabs/janus)
 ![Python Version](https://img.shields.io/badge/python-3.7%20%7C%203.8-brightgreen.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
+Janus is a simple and easy A/B Test Calculator that allows you to run A/B tests and get reports in a few lines of code. 
 
-Janus is an A/B Test Engine to be used in a variety use cases, especially to measure conversion, ticket and ARPU difference between variants, i.e, typical metrics for tests in marketplaces. The engine name is an analogy to _Janus_, the god of changes and transitions.
+It's developed mainly for website experiments. While many calculators only account for conversion analysis and consider only two variants, Janus allows multivariant tests and measure _Conversion_, _Averge Ticket_ and _Average Revenue Per User (ARPU)_ over variants, i.e, typical metrics for tests in marketplaces. 
 
-This library came as an ideia of separate the statistical calculations in A/B Tests from other code that is typically used to manage tests and execute queries over the company's database, and hence usually carry proprietary code and even business logic, which should not be open sourced. There was the bud to build this library and get it open sourced.
-
-Checkout the [streamlit app](https://lgabs-janus-homepage-31diny.streamlit.app/) from this repo.
+The engine name is an analogy to _Janus_, the god of changes and transitions. 
 
 ## Installation
 
-Open a terminal, clone this repository into your machine and stay into the project directory.
-
-Using a virtual environment is a good practice, but it is optional. If you enjoy it, go ahead and create a virtual environment by typing:
+Janus is distributed in [pypi](https://pypi.org/project/janus-web-ab-testing/). You can install it by using:
 ```
-python3 -m venv venv -r requirements.txt
-```
-Once it is created, you must now activate the environment by using:
-```
-source venv/bin/activate
-```
-Now, you can install our lib (if you are not using virtual env, go straight to this command):
-```
-make install
+pip install janus-web-ab-testing
 ```
 
-And that's it! Now, inside our environment, we can import the `janus` lib inside our scripts with plain `import janus` etc. Try to test using the same code on `experiment_example.ipynb` notebook here or in a plain terminal. 
+You can now run a quick example of a A/B test:
+```
+from janus.variant import Variant
+from janus.experiment import WebsiteExperiment
 
-## Using as an Application
+variant_A = Variant(
+    name="A",
+    impressions=1000, 
+    conversions=100, 
+    revenue=10000
+)
+variant_B = Variant(
+    name="B",
+    impressions=1000, 
+    conversions=120, 
+    revenue=9000
+)
+variants = [variant_A, variant_B]
 
-You can use _janus_ as a streamlit product. Just run `make run` and an streamlit app will launch.
+experiment = WebsiteExperiment(variants, baseline_variant="A")
+experiment.run()
+experiment.print_reports()
+```
+
+See more in the [quickstart notebook](examples/Janus%20Quickstart.ipynb).
+
+## The Janus Website
+
+My plan is to build a website to showcase the Janus library and to provide a simple interface to run A/B tests. However, only the library is almost ready, and the next steps would be:
+- build a backend with FastAPI using the library
+- build a frontend (JavaScript maybe)
+- deploy the website
+
+> **Warning**
+> The distributed package is from this branch, which will be merged to `main` in the first release of this project. The `main` branch uses another previous approach for the calculations (yet correct), and has a streamlit app to showcase the library.
+> In this branch, however, we'll change the whole project towards not only a library, but also for a full stack application, with frontend and backend.
 
 
 ## References
 * [What is A/B Testing](https://en.wikipedia.org/wiki/A/B_testing)
-* The bayesian calculations were implemented based on [this VWO white paper](https://cdn2.hubspot.net/hubfs/310840/VWO_SmartStats_technical_whitepaper.pdf)
-* [VWO Website](https://vwo.com/)
+* [VWO paper about bayesian A/B testing](https://vwo.com/downloads/VWO_SmartStats_technical_whitepaper.pdf)
 * [Agile A/B testing with Bayesian Statistics and Python](https://web.archive.org/web/20150419163005/http://www.bayesianwitch.com/blog/2014/bayesian_ab_test.html)
 * [Understanding Bayesian A/B testing (using baseball statistics)](http://varianceexplained.org/r/bayesian_ab_baseball/)
 * [It’s time to re-think A/B testing](https://mobiledevmemo.com/its-time-to-abandon-a-b-testing/)
