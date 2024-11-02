@@ -1,13 +1,10 @@
 import streamlit as st
 
 import logging
-from utils import print_warning
 
 st.set_page_config(page_title="Why Bayesian?", page_icon="📊")
 
 logging.basicConfig(level=logging.INFO)
-
-print_warning()
 
 st.markdown(
     """

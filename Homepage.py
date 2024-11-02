@@ -1,14 +1,4 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-import scipy.stats
-from scipy.stats import norm
-
-import janus
-from janus.stats.experiment import Experiment, Variant
-
-from utils import save_results_in_session_state, print_warning
-
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -16,8 +6,6 @@ logging.basicConfig(level=logging.INFO)
 st.set_page_config(page_title="Janus: The A/B Bayesian Testing App", page_icon="📊")
 
 st.image("logo.png", width=250)
-
-print_warning()
 
 st.markdown(
     """
