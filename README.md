@@ -36,7 +36,18 @@ And that's it! Now, inside our environment, we can import the `janus` lib inside
 
 ## Using as an Application
 
-You can use _janus_ as a streamlit product. Just run `make run` and an streamlit app will launch.
+You can use _janus_ as a streamlit product in two ways:
+
+### 1. Using Docker (Recommended)
+Build and run the application locally using Docker:
+```bash
+# Build the Docker image
+docker build -t janus .
+
+# Run the container
+docker run -p 8501:8501 janus
+```
+Or use `make run`. Then open your browser and navigate to `http://localhost:8501`
 
 
 ## References
@@ -45,7 +56,7 @@ You can use _janus_ as a streamlit product. Just run `make run` and an streamlit
 * [VWO Website](https://vwo.com/)
 * [Agile A/B testing with Bayesian Statistics and Python](https://web.archive.org/web/20150419163005/http://www.bayesianwitch.com/blog/2014/bayesian_ab_test.html)
 * [Understanding Bayesian A/B testing (using baseball statistics)](http://varianceexplained.org/r/bayesian_ab_baseball/)
-* [It’s time to re-think A/B testing](https://mobiledevmemo.com/its-time-to-abandon-a-b-testing/)
+* [It's time to re-think A/B testing](https://mobiledevmemo.com/its-time-to-abandon-a-b-testing/)
 * [Conjugate Priors](https://en.wikipedia.org/wiki/Conjugate_prior)
 * [Curso de Teste A/B Bayesiano do Lazy Programmer](https://www.udemy.com/course/bayesian-machine-learning-in-python-ab-testing)
 * [Binomial Distributions](https://www.youtube.com/watch?v=8idr1WZ1A7Q)

@@ -17,4 +17,4 @@ types:
 	pytype --keep-going bot
 
 run:
-	streamlit run Homepage.py
+	docker run -p 8501:8501 janus
