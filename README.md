@@ -52,7 +52,7 @@ Or use `make run`. Then open your browser and navigate to `http://localhost:8501
 
 ## References
 * [What is A/B Testing](https://en.wikipedia.org/wiki/A/B_testing)
-* The bayesian calculations were implemented based on [this VWO white paper]([https://cdn2.hubspot.net/hubfs/310840/VWO_SmartStats_technical_whitepaper.pdf](https://vwo.com/downloads/VWO_SmartStats_technical_whitepaper.pdf))
+* The bayesian calculations were implemented based on [this VWO white paper](https://vwo.com/downloads/VWO_SmartStats_technical_whitepaper.pdf)
 * [Agile A/B testing with Bayesian Statistics and Python](https://web.archive.org/web/20150419163005/http://www.bayesianwitch.com/blog/2014/bayesian_ab_test.html)
 * [Understanding Bayesian A/B testing (using baseball statistics)](http://varianceexplained.org/r/bayesian_ab_baseball/)
 * [It's time to re-think A/B testing](https://mobiledevmemo.com/its-time-to-abandon-a-b-testing/)
