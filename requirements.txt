@@ -1,4 +1,4 @@
-fastapi==0.104.1
+fastapi==0.115.11
 uvicorn==0.24.0
 pydantic==2.4.2
 bayesian-testing==0.6.2
