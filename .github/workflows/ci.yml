@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -29,10 +29,10 @@ jobs:
 
     - name: Run tests
       run: |
-        python -m unittest discover tests
+        python -m pytest tests
 
-  docker:
-    needs: build
+  build:
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
