@@ -136,50 +136,84 @@
                         </div>
                     </div>
 
-                    <!-- Conversion Stats Table -->
+                    <!-- Conversion Stats Section with Table and Chart side by side -->
                     <div class="card mb-4">
                         <div class="card-header bg-light">
                             <h5 class="mb-0">Conversion Statistics</h5>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped table-hover" id="conversionTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Variant</th>
-                                            <th>Expected Loss</th>
-                                            <th>Probability of Being Best</th>
-                                            <th>Lift vs Baseline</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Conversion data will be inserted here -->
-                                    </tbody>
-                                </table>
+                            <div class="row">
+                                <!-- Conversion Stats Table on the left -->
+                                <div class="col-md-5">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" id="conversionTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Variant</th>
+                                                    <th>Posterior Mean</th>
+                                                    <th>Expected Loss</th>
+                                                    <th>Probability of Being Best</th>
+                                                    <th>Lift vs Baseline</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Conversion data will be inserted here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <!-- Conversion Distribution Chart on the right -->
+                                <div class="col-md-7">
+                                    <div class="chart-container" style="position: relative; height:380px; padding-bottom: 10px;">
+                                        <canvas id="conversionDistributionChart"></canvas>
+                                    </div>
+                                    <div id="dashedLineLegend" class="text-center mt-2 mb-3" style="font-size: 0.75rem;">
+                                        <span style="border-top: 2px dashed #666; width: 30px; display: inline-block; position: relative; top: -3px; margin-right: 8px;"></span>
+                                        Dashed lines represent posterior means
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ARPU Stats Table -->
+                    <!-- ARPU Stats Section with Table and Chart side by side -->
                     <div class="card mb-4">
                         <div class="card-header bg-light">
                             <h5 class="mb-0">ARPU Statistics</h5>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped table-hover" id="arpuTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Variant</th>
-                                            <th>Expected Loss</th>
-                                            <th>Probability of Being Best</th>
-                                            <th>Lift vs Baseline</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- ARPU data will be inserted here -->
-                                    </tbody>
-                                </table>
+                            <div class="row">
+                                <!-- ARPU Stats Table on the left -->
+                                <div class="col-md-5">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" id="arpuTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Variant</th>
+                                                    <th>Posterior Mean</th>
+                                                    <th>Expected Loss</th>
+                                                    <th>Probability of Being Best</th>
+                                                    <th>Lift vs Baseline</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- ARPU data will be inserted here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <!-- ARPU Distribution Chart on the right -->
+                                <div class="col-md-7">
+                                    <div class="chart-container" style="position: relative; height:380px; padding-bottom: 10px;">
+                                        <canvas id="arpuDistributionChart"></canvas>
+                                    </div>
+                                    <div id="arpuDashedLineLegend" class="text-center mt-2 mb-3" style="font-size: 0.75rem;">
+                                        <span style="border-top: 2px dashed #666; width: 30px; display: inline-block; position: relative; top: -3px; margin-right: 8px;"></span>
+                                        Dashed lines represent posterior means
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -190,20 +224,37 @@
                             <h5 class="mb-0">Revenue Per Sale Statistics</h5>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped table-hover" id="revenuePerSaleTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Variant</th>
-                                            <th>Expected Loss</th>
-                                            <th>Probability of Being Best</th>
-                                            <th>Lift vs Baseline</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Revenue Per Sale data will be inserted here -->
-                                    </tbody>
-                                </table>
+                            <div class="row">
+                                <!-- Revenue Per Sale Stats Table on the left -->
+                                <div class="col-md-5">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" id="revenuePerSaleTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Variant</th>
+                                                    <th>Posterior Mean</th>
+                                                    <th>Expected Loss</th>
+                                                    <th>Probability of Being Best</th>
+                                                    <th>Lift vs Baseline</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Revenue Per Sale data will be inserted here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <!-- Revenue Per Sale Distribution Chart on the right -->
+                                <div class="col-md-7">
+                                    <div class="chart-container" style="position: relative; height:380px; padding-bottom: 10px;">
+                                        <canvas id="revenuePerSaleDistributionChart"></canvas>
+                                    </div>
+                                    <div id="revenuePerSaleDashedLineLegend" class="text-center mt-2 mb-3" style="font-size: 0.75rem;">
+                                        <span style="border-top: 2px dashed #666; width: 30px; display: inline-block; position: relative; top: -3px; margin-right: 8px;"></span>
+                                        Dashed lines represent posterior means
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -243,7 +294,17 @@
     </template>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Use Chart.js v3.7.1 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script>
+        // Check if Chart.js loaded properly
+        console.log('Chart.js loaded:', typeof Chart !== 'undefined');
+        if (typeof Chart !== 'undefined') {
+            console.log('Chart.js version:', Chart.version);
+        } else {
+            console.error('Chart.js failed to load');
+        }
+    </script>
     <script src="/static/app.js"></script>
 </body>
 </html> 

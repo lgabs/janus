@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Check if Chart.js is available
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js not loaded, charts will not be displayed');
+    } else {
+        console.log('Chart.js is available, version:', Chart.version);
+    }
+    
     // DOM elements
     const experimentForm = document.getElementById('experimentForm');
     const variantsContainer = document.getElementById('variantsContainer');
@@ -10,6 +17,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const arpuTable = document.getElementById('arpuTable').querySelector('tbody');
     const revenuePerSaleTable = document.getElementById('revenuePerSaleTable').querySelector('tbody');
     const exportResultsBtn = document.getElementById('exportResultsBtn');
+    const conversionDistributionChart = document.getElementById('conversionDistributionChart');
+    const arpuDistributionChart = document.getElementById('arpuDistributionChart');
+    const revenuePerSaleDistributionChart = document.getElementById('revenuePerSaleDistributionChart');
+    
+    // Chart instances
+    let distributionChartInstance = null;
+    let arpuDistributionChartInstance = null;
+    let revenuePerSaleDistributionChartInstance = null;
+    
+    // Color palette for variants (baseline is always red)
+    const variantColors = {
+        baseline: 'rgba(220, 53, 69, 0.7)', // Red for baseline
+        others: [
+            'rgba(0, 123, 255, 0.7)',       // Blue
+            'rgba(40, 167, 69, 0.7)',       // Green
+            'rgba(255, 193, 7, 0.7)',       // Yellow
+            'rgba(165, 42, 42, 0.7)',       // Brown
+            'rgba(111, 66, 193, 0.7)',      // Purple
+            'rgba(23, 162, 184, 0.7)',      // Cyan
+            'rgba(255, 102, 0, 0.7)',       // Orange
+            'rgba(0, 128, 128, 0.7)',       // Teal
+            'rgba(128, 0, 128, 0.7)'        // Magenta
+        ]
+    };
     
     // Template for variant inputs
     const variantTemplate = document.getElementById('variantTemplate');
@@ -20,6 +51,31 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add initial variants (at least 2)
     addVariant('A');
     addVariant('B');
+    
+    // Set default values for variants
+    setTimeout(() => {
+        // Get all variant cards
+        const variantCards = document.querySelectorAll('.variant-card');
+        
+        // Set default values for variant A (baseline)
+        if (variantCards.length > 0) {
+            const variantA = variantCards[0];
+            variantA.querySelector('.variant-impressions').value = 1000;
+            variantA.querySelector('.variant-conversions').value = 100;
+            variantA.querySelector('.variant-revenue').value = 100;
+        }
+        
+        // Set default values for variant B
+        if (variantCards.length > 1) {
+            const variantB = variantCards[1];
+            variantB.querySelector('.variant-impressions').value = 1000;
+            variantB.querySelector('.variant-conversions').value = 120;
+            variantB.querySelector('.variant-revenue').value = 110;
+        }
+        
+        // Set variant A as baseline
+        baselineVariantInput.value = 'A';
+    }, 100);
     
     // Event listeners
     addVariantBtn.addEventListener('click', () => {
@@ -102,6 +158,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             const data = await response.json();
+            
+            // Store the data globally for later use
+            window.lastAnalysisData = data;
             
             // Display results
             displayResults(data);
@@ -258,8 +317,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 row.classList.add('best-variant');
             }
             
+            // Add posterior mean column
+            const posteriorMean = variant.posterior_mean !== undefined ? 
+                formatPercentage(variant.posterior_mean) : 
+                formatPercentage(data.summary.find(v => v.variant === variant.variant)?.conversion || 0);
+            
             row.innerHTML = `
                 <td>${variant.variant}</td>
+                <td>${posteriorMean}</td>
                 <td>${variant.expected_loss.toLocaleString()}</td>
                 <td>${formatProbability(variant.prob_being_best)}</td>
                 <td>${formatLift(variant.lift)}</td>
@@ -267,6 +332,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             conversionTable.appendChild(row);
         });
+        
+        // Create conversion distribution chart
+        createConversionDistributionChart(data.conversion_distributions);
         
         // Populate ARPU stats table
         data.arpu_stats.forEach(variant => {
@@ -280,8 +348,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 row.classList.add('best-variant');
             }
             
+            // Add posterior mean column
+            const posteriorMean = variant.posterior_mean !== undefined ? 
+                variant.posterior_mean.toFixed(4) : 
+                data.summary.find(v => v.variant === variant.variant)?.arpu.toFixed(4) || "0.0000";
+            
             row.innerHTML = `
                 <td>${variant.variant}</td>
+                <td>${posteriorMean}</td>
                 <td>${variant.expected_loss}</td>
                 <td>${formatProbability(variant.prob_being_best)}</td>
                 <td>${formatLift(variant.lift)}</td>
@@ -289,6 +363,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             arpuTable.appendChild(row);
         });
+        
+        // Create ARPU distribution chart
+        createArpuDistributionChart(data.arpu_distributions);
         
         // Populate revenue per sale stats table
         data.revenue_per_sale_stats.forEach(variant => {
@@ -302,8 +379,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 row.classList.add('best-variant');
             }
             
+            // Add posterior mean column
+            const posteriorMean = variant.posterior_mean !== undefined ? 
+                variant.posterior_mean.toFixed(4) : 
+                data.summary.find(v => v.variant === variant.variant)?.avg_ticket.toFixed(4) || "0.0000";
+            
             row.innerHTML = `
                 <td>${variant.variant}</td>
+                <td>${posteriorMean}</td>
                 <td>${variant.expected_loss}</td>
                 <td>${formatProbability(variant.prob_being_best)}</td>
                 <td>${formatLift(variant.lift)}</td>
@@ -311,6 +394,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             revenuePerSaleTable.appendChild(row);
         });
+        
+        // Create Revenue Per Sale distribution chart
+        createRevenuePerSaleDistributionChart(data.revenue_per_sale_distributions);
     }
     
     // Find the best variant based on a metric
@@ -398,5 +484,543 @@ document.addEventListener('DOMContentLoaded', function() {
                 return `"${cell.textContent.trim().replace(/"/g, '""')}"`;
             }).join(',');
         }).join('\n');
+    }
+    
+    // Create conversion distribution chart
+    function createConversionDistributionChart(distributionData) {
+        // If there's an existing chart, destroy it
+        if (distributionChartInstance) {
+            distributionChartInstance.destroy();
+        }
+        
+        // Prepare data for the chart
+        const datasets = [];
+        const baselineVariant = baselineVariantInput.value.trim();
+        let colorIndex = 0;
+        
+        // Process each variant's distribution
+        for (const [variantName, distribution] of Object.entries(distributionData)) {
+            // Calculate kernel density estimation for smoother visualization
+            const kdePoints = calculateKDE(distribution);
+            
+            // Determine color based on whether it's baseline or not
+            let color;
+            if (variantName === baselineVariant) {
+                color = variantColors.baseline;
+            } else {
+                color = variantColors.others[colorIndex % variantColors.others.length];
+                colorIndex++;
+            }
+            
+            datasets.push({
+                label: variantName,
+                data: kdePoints,
+                borderColor: color,
+                backgroundColor: color.replace('0.7', '0.2'),
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: true,
+                tension: 0.4
+            });
+            
+            // Find posterior mean for this variant
+            const variantData = window.lastAnalysisData?.conversion_stats.find(v => v.variant === variantName);
+            let posteriorMean = null;
+            
+            if (variantData) {
+                if (variantData.posterior_mean !== undefined) {
+                    posteriorMean = variantData.posterior_mean;
+                } else {
+                    // If posterior_mean is not available, try to use conversion rate from summary
+                    const summaryData = window.lastAnalysisData?.summary.find(v => v.variant === variantName);
+                    if (summaryData && summaryData.conversion !== undefined) {
+                        posteriorMean = summaryData.conversion;
+                    }
+                }
+            }
+            
+            if (posteriorMean !== null) {
+                // Add a vertical line dataset for the posterior mean
+                datasets.push({
+                    label: `${variantName} Mean`,
+                    data: [
+                        { x: posteriorMean, y: 0 },
+                        { x: posteriorMean, y: 50 } // Use a high value to ensure it spans the chart
+                    ],
+                    borderColor: color,
+                    borderWidth: 2,
+                    borderDash: [6, 4],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    showLine: true
+                });
+            }
+        }
+        
+        // Create chart options
+        const chartOptions = {
+            scales: {
+                x: {
+                    type: 'linear',
+                    title: {
+                        display: true,
+                        text: 'Conversion Rate',
+                        padding: {
+                            top: 15,
+                            bottom: 10
+                        }
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return (value * 100).toFixed(1) + '%';
+                        }
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Density'
+                    },
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            const value = context[0].parsed.x;
+                            return 'Conversion Rate: ' + (value * 100).toFixed(2) + '%';
+                        }
+                    },
+                    filter: function(tooltipItem) {
+                        // Hide tooltips for the mean lines
+                        return !tooltipItem.dataset.label.includes('Mean');
+                    }
+                },
+                legend: {
+                    position: 'right',
+                    align: 'start',
+                    labels: {
+                        boxWidth: 12,
+                        font: {
+                            size: 11
+                        },
+                        filter: function(legendItem, chartData) {
+                            // Hide the mean lines from the legend
+                            return !legendItem.text.includes('Mean');
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Conversion Rate Distributions',
+                    font: {
+                        size: 14
+                    },
+                    padding: {
+                        top: 10,
+                        bottom: 20
+                    }
+                }
+            },
+            layout: {
+                padding: {
+                    top: 30,  // Add padding at the top for variant labels
+                    right: 10,
+                    bottom: 10,
+                    left: 10
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                intersect: false
+            },
+            responsive: true,
+            maintainAspectRatio: false
+        };
+        
+        // Create the chart
+        try {
+            console.log('Creating chart with options:', chartOptions);
+            distributionChartInstance = new Chart(conversionDistributionChart, {
+                type: 'line',
+                data: {
+                    datasets: datasets
+                },
+                options: chartOptions
+            });
+        } catch (error) {
+            console.error('Error creating chart:', error);
+        }
+    }
+    
+    // Calculate Kernel Density Estimation for smoother distribution visualization
+    function calculateKDE(data) {
+        // Sort the data
+        const sortedData = [...data].sort((a, b) => a - b);
+        
+        // Determine min and max for the range
+        const min = Math.max(0, sortedData[0] - 0.01);
+        const max = sortedData[sortedData.length - 1] + 0.01;
+        
+        // Generate points for the KDE
+        const points = [];
+        const bandwidth = 0.005; // Adjust based on your data
+        const numPoints = 100;
+        
+        for (let i = 0; i < numPoints; i++) {
+            const x = min + (i / (numPoints - 1)) * (max - min);
+            let density = 0;
+            
+            // Calculate density at point x
+            for (const value of sortedData) {
+                const z = (x - value) / bandwidth;
+                density += Math.exp(-0.5 * z * z) / (bandwidth * Math.sqrt(2 * Math.PI));
+            }
+            
+            density /= sortedData.length;
+            points.push({x, y: density});
+        }
+        
+        return points;
+    }
+    
+    // Create ARPU distribution chart
+    function createArpuDistributionChart(distributionData) {
+        // If there's an existing chart, destroy it
+        if (arpuDistributionChartInstance) {
+            arpuDistributionChartInstance.destroy();
+        }
+        
+        // Prepare data for the chart
+        const datasets = [];
+        const baselineVariant = baselineVariantInput.value.trim();
+        let colorIndex = 0;
+        
+        // Process each variant's distribution
+        for (const [variantName, distribution] of Object.entries(distributionData)) {
+            // Calculate kernel density estimation for smoother visualization
+            const kdePoints = calculateKDE(distribution);
+            
+            // Determine color based on whether it's baseline or not
+            let color;
+            if (variantName === baselineVariant) {
+                color = variantColors.baseline;
+            } else {
+                color = variantColors.others[colorIndex % variantColors.others.length];
+                colorIndex++;
+            }
+            
+            datasets.push({
+                label: variantName,
+                data: kdePoints,
+                borderColor: color,
+                backgroundColor: color.replace('0.7', '0.2'),
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: true,
+                tension: 0.4
+            });
+            
+            // Find posterior mean for this variant
+            const variantData = window.lastAnalysisData?.arpu_stats.find(v => v.variant === variantName);
+            let posteriorMean = null;
+            
+            if (variantData) {
+                if (variantData.posterior_mean !== undefined) {
+                    posteriorMean = variantData.posterior_mean;
+                } else {
+                    // If posterior_mean is not available, try to use ARPU from summary
+                    const summaryData = window.lastAnalysisData?.summary.find(v => v.variant === variantName);
+                    if (summaryData && summaryData.arpu !== undefined) {
+                        posteriorMean = summaryData.arpu;
+                    }
+                }
+            }
+            
+            if (posteriorMean !== null) {
+                // Add a vertical line dataset for the posterior mean
+                datasets.push({
+                    label: `${variantName} Mean`,
+                    data: [
+                        { x: posteriorMean, y: 0 },
+                        { x: posteriorMean, y: 50 } // Use a high value to ensure it spans the chart
+                    ],
+                    borderColor: color,
+                    borderWidth: 2,
+                    borderDash: [6, 4],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    showLine: true
+                });
+            }
+        }
+        
+        // Create chart options
+        const chartOptions = {
+            scales: {
+                x: {
+                    type: 'linear',
+                    title: {
+                        display: true,
+                        text: 'ARPU (Average Revenue Per User)',
+                        padding: {
+                            top: 15,
+                            bottom: 10
+                        }
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value.toFixed(2);
+                        }
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Density'
+                    },
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            const value = context[0].parsed.x;
+                            return 'ARPU: ' + value.toFixed(4);
+                        }
+                    },
+                    filter: function(tooltipItem) {
+                        // Hide tooltips for the mean lines
+                        return !tooltipItem.dataset.label.includes('Mean');
+                    }
+                },
+                legend: {
+                    position: 'right',
+                    align: 'start',
+                    labels: {
+                        boxWidth: 12,
+                        font: {
+                            size: 11
+                        },
+                        filter: function(legendItem, chartData) {
+                            // Hide the mean lines from the legend
+                            return !legendItem.text.includes('Mean');
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'ARPU Distributions',
+                    font: {
+                        size: 14
+                    },
+                    padding: {
+                        top: 10,
+                        bottom: 20
+                    }
+                }
+            },
+            layout: {
+                padding: {
+                    top: 30,  // Add padding at the top for variant labels
+                    right: 10,
+                    bottom: 10,
+                    left: 10
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                intersect: false
+            },
+            responsive: true,
+            maintainAspectRatio: false
+        };
+        
+        // Create the chart
+        try {
+            console.log('Creating ARPU chart with options:', chartOptions);
+            arpuDistributionChartInstance = new Chart(arpuDistributionChart, {
+                type: 'line',
+                data: {
+                    datasets: datasets
+                },
+                options: chartOptions
+            });
+        } catch (error) {
+            console.error('Error creating ARPU chart:', error);
+        }
+    }
+    
+    // Create Revenue Per Sale distribution chart
+    function createRevenuePerSaleDistributionChart(distributionData) {
+        // If there's an existing chart, destroy it
+        if (revenuePerSaleDistributionChartInstance) {
+            revenuePerSaleDistributionChartInstance.destroy();
+        }
+        
+        // Prepare data for the chart
+        const datasets = [];
+        const baselineVariant = baselineVariantInput.value.trim();
+        let colorIndex = 0;
+        
+        // Process each variant's distribution
+        for (const [variantName, distribution] of Object.entries(distributionData)) {
+            // Calculate kernel density estimation for smoother visualization
+            const kdePoints = calculateKDE(distribution);
+            
+            // Determine color based on whether it's baseline or not
+            let color;
+            if (variantName === baselineVariant) {
+                color = variantColors.baseline;
+            } else {
+                color = variantColors.others[colorIndex % variantColors.others.length];
+                colorIndex++;
+            }
+            
+            datasets.push({
+                label: variantName,
+                data: kdePoints,
+                borderColor: color,
+                backgroundColor: color.replace('0.7', '0.2'),
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: true,
+                tension: 0.4
+            });
+            
+            // Find posterior mean for this variant
+            const variantData = window.lastAnalysisData?.revenue_per_sale_stats.find(v => v.variant === variantName);
+            let posteriorMean = null;
+            
+            if (variantData) {
+                if (variantData.posterior_mean !== undefined) {
+                    posteriorMean = variantData.posterior_mean;
+                } else {
+                    // If posterior_mean is not available, try to use avg_ticket from summary
+                    const summaryData = window.lastAnalysisData?.summary.find(v => v.variant === variantName);
+                    if (summaryData && summaryData.avg_ticket !== undefined) {
+                        posteriorMean = summaryData.avg_ticket;
+                    }
+                }
+            }
+            
+            if (posteriorMean !== null) {
+                // Add a vertical line dataset for the posterior mean
+                datasets.push({
+                    label: `${variantName} Mean`,
+                    data: [
+                        { x: posteriorMean, y: 0 },
+                        { x: posteriorMean, y: 50 } // Use a high value to ensure it spans the chart
+                    ],
+                    borderColor: color,
+                    borderWidth: 2,
+                    borderDash: [6, 4],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    showLine: true
+                });
+            }
+        }
+        
+        // Create chart options
+        const chartOptions = {
+            scales: {
+                x: {
+                    type: 'linear',
+                    title: {
+                        display: true,
+                        text: 'Revenue Per Sale',
+                        padding: {
+                            top: 15,
+                            bottom: 10
+                        }
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value.toFixed(2);
+                        }
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Density'
+                    },
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            const value = context[0].parsed.x;
+                            return 'Revenue Per Sale: ' + value.toFixed(4);
+                        }
+                    },
+                    filter: function(tooltipItem) {
+                        // Hide tooltips for the mean lines
+                        return !tooltipItem.dataset.label.includes('Mean');
+                    }
+                },
+                legend: {
+                    position: 'right',
+                    align: 'start',
+                    labels: {
+                        boxWidth: 12,
+                        font: {
+                            size: 11
+                        },
+                        filter: function(legendItem, chartData) {
+                            // Hide the mean lines from the legend
+                            return !legendItem.text.includes('Mean');
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Revenue Per Sale Distributions',
+                    font: {
+                        size: 14
+                    },
+                    padding: {
+                        top: 10,
+                        bottom: 20
+                    }
+                }
+            },
+            layout: {
+                padding: {
+                    top: 30,  // Add padding at the top for variant labels
+                    right: 10,
+                    bottom: 10,
+                    left: 10
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                intersect: false
+            },
+            responsive: true,
+            maintainAspectRatio: false
+        };
+        
+        // Create the chart
+        try {
+            console.log('Creating Revenue Per Sale chart with options:', chartOptions);
+            revenuePerSaleDistributionChartInstance = new Chart(revenuePerSaleDistributionChart, {
+                type: 'line',
+                data: {
+                    datasets: datasets
+                },
+                options: chartOptions
+            });
+        } catch (error) {
+            console.error('Error creating Revenue Per Sale chart:', error);
+        }
     }
 }); 
