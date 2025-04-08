@@ -498,11 +498,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const baselineVariant = baselineVariantInput.value.trim();
         let colorIndex = 0;
         
-        // Process each variant's distribution
+        // Calculate KDE points and find maximum density
+        let maxDensity = 0;
+        const kdePointsMap = {};
+        
         for (const [variantName, distribution] of Object.entries(distributionData)) {
-            // Calculate kernel density estimation for smoother visualization
             const kdePoints = calculateKDE(distribution);
+            kdePointsMap[variantName] = kdePoints;
             
+            // Find maximum density across all variants
+            maxDensity = Math.max(maxDensity, ...kdePoints.map(point => point.y));
+        }
+        
+        // Create datasets for each variant
+        for (const [variantName, distribution] of Object.entries(distributionData)) {
             // Determine color based on whether it's baseline or not
             let color;
             if (variantName === baselineVariant) {
@@ -512,9 +521,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 colorIndex++;
             }
             
+            // Add the distribution curve dataset
             datasets.push({
                 label: variantName,
-                data: kdePoints,
+                data: kdePointsMap[variantName],
                 borderColor: color,
                 backgroundColor: color.replace('0.7', '0.2'),
                 borderWidth: 2,
@@ -522,40 +532,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 fill: true,
                 tension: 0.4
             });
-            
-            // Find posterior mean for this variant
-            const variantData = window.lastAnalysisData?.conversion_stats.find(v => v.variant === variantName);
-            let posteriorMean = null;
-            
-            if (variantData) {
-                if (variantData.posterior_mean !== undefined) {
-                    posteriorMean = variantData.posterior_mean;
-                } else {
-                    // If posterior_mean is not available, try to use conversion rate from summary
-                    const summaryData = window.lastAnalysisData?.summary.find(v => v.variant === variantName);
-                    if (summaryData && summaryData.conversion !== undefined) {
-                        posteriorMean = summaryData.conversion;
-                    }
-                }
-            }
-            
-            if (posteriorMean !== null) {
-                // Add a vertical line dataset for the posterior mean
-                datasets.push({
-                    label: `${variantName} Mean`,
-                    data: [
-                        { x: posteriorMean, y: 0 },
-                        { x: posteriorMean, y: 50 } // Use a high value to ensure it spans the chart
-                    ],
-                    borderColor: color,
-                    borderWidth: 2,
-                    borderDash: [6, 4],
-                    pointRadius: 0,
-                    fill: false,
-                    tension: 0,
-                    showLine: true
-                });
-            }
         }
         
         // Create chart options
@@ -582,7 +558,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         display: true,
                         text: 'Density'
                     },
-                    beginAtZero: true
+                    beginAtZero: true,
+                    suggestedMax: maxDensity * 1.1
                 }
             },
             plugins: {
@@ -592,10 +569,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             const value = context[0].parsed.x;
                             return 'Conversion Rate: ' + (value * 100).toFixed(2) + '%';
                         }
-                    },
-                    filter: function(tooltipItem) {
-                        // Hide tooltips for the mean lines
-                        return !tooltipItem.dataset.label.includes('Mean');
                     }
                 },
                 legend: {
@@ -605,10 +578,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         boxWidth: 12,
                         font: {
                             size: 11
-                        },
-                        filter: function(legendItem, chartData) {
-                            // Hide the mean lines from the legend
-                            return !legendItem.text.includes('Mean');
                         }
                     }
                 },
@@ -626,7 +595,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             layout: {
                 padding: {
-                    top: 30,  // Add padding at the top for variant labels
+                    top: 30,
                     right: 10,
                     bottom: 10,
                     left: 10
@@ -642,7 +611,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Create the chart
         try {
-            console.log('Creating chart with options:', chartOptions);
             distributionChartInstance = new Chart(conversionDistributionChart, {
                 type: 'line',
                 data: {
@@ -698,11 +666,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const baselineVariant = baselineVariantInput.value.trim();
         let colorIndex = 0;
         
-        // Process each variant's distribution
+        // Calculate KDE points and find maximum density
+        let maxDensity = 0;
+        const kdePointsMap = {};
+        
         for (const [variantName, distribution] of Object.entries(distributionData)) {
-            // Calculate kernel density estimation for smoother visualization
             const kdePoints = calculateKDE(distribution);
+            kdePointsMap[variantName] = kdePoints;
             
+            // Find maximum density across all variants
+            maxDensity = Math.max(maxDensity, ...kdePoints.map(point => point.y));
+        }
+        
+        // Create datasets for each variant
+        for (const [variantName, distribution] of Object.entries(distributionData)) {
             // Determine color based on whether it's baseline or not
             let color;
             if (variantName === baselineVariant) {
@@ -712,9 +689,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 colorIndex++;
             }
             
+            // Add the distribution curve dataset
             datasets.push({
                 label: variantName,
-                data: kdePoints,
+                data: kdePointsMap[variantName],
                 borderColor: color,
                 backgroundColor: color.replace('0.7', '0.2'),
                 borderWidth: 2,
@@ -722,40 +700,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 fill: true,
                 tension: 0.4
             });
-            
-            // Find posterior mean for this variant
-            const variantData = window.lastAnalysisData?.arpu_stats.find(v => v.variant === variantName);
-            let posteriorMean = null;
-            
-            if (variantData) {
-                if (variantData.posterior_mean !== undefined) {
-                    posteriorMean = variantData.posterior_mean;
-                } else {
-                    // If posterior_mean is not available, try to use ARPU from summary
-                    const summaryData = window.lastAnalysisData?.summary.find(v => v.variant === variantName);
-                    if (summaryData && summaryData.arpu !== undefined) {
-                        posteriorMean = summaryData.arpu;
-                    }
-                }
-            }
-            
-            if (posteriorMean !== null) {
-                // Add a vertical line dataset for the posterior mean
-                datasets.push({
-                    label: `${variantName} Mean`,
-                    data: [
-                        { x: posteriorMean, y: 0 },
-                        { x: posteriorMean, y: 50 } // Use a high value to ensure it spans the chart
-                    ],
-                    borderColor: color,
-                    borderWidth: 2,
-                    borderDash: [6, 4],
-                    pointRadius: 0,
-                    fill: false,
-                    tension: 0,
-                    showLine: true
-                });
-            }
         }
         
         // Create chart options
@@ -782,7 +726,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         display: true,
                         text: 'Density'
                     },
-                    beginAtZero: true
+                    beginAtZero: true,
+                    suggestedMax: maxDensity * 1.1
                 }
             },
             plugins: {
@@ -792,10 +737,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             const value = context[0].parsed.x;
                             return 'ARPU: ' + value.toFixed(4);
                         }
-                    },
-                    filter: function(tooltipItem) {
-                        // Hide tooltips for the mean lines
-                        return !tooltipItem.dataset.label.includes('Mean');
                     }
                 },
                 legend: {
@@ -805,10 +746,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         boxWidth: 12,
                         font: {
                             size: 11
-                        },
-                        filter: function(legendItem, chartData) {
-                            // Hide the mean lines from the legend
-                            return !legendItem.text.includes('Mean');
                         }
                     }
                 },
@@ -826,7 +763,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             layout: {
                 padding: {
-                    top: 30,  // Add padding at the top for variant labels
+                    top: 30,
                     right: 10,
                     bottom: 10,
                     left: 10
@@ -842,7 +779,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Create the chart
         try {
-            console.log('Creating ARPU chart with options:', chartOptions);
             arpuDistributionChartInstance = new Chart(arpuDistributionChart, {
                 type: 'line',
                 data: {
@@ -867,11 +803,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const baselineVariant = baselineVariantInput.value.trim();
         let colorIndex = 0;
         
-        // Process each variant's distribution
+        // Calculate KDE points and find maximum density
+        let maxDensity = 0;
+        const kdePointsMap = {};
+        
         for (const [variantName, distribution] of Object.entries(distributionData)) {
-            // Calculate kernel density estimation for smoother visualization
             const kdePoints = calculateKDE(distribution);
+            kdePointsMap[variantName] = kdePoints;
             
+            // Find maximum density across all variants
+            maxDensity = Math.max(maxDensity, ...kdePoints.map(point => point.y));
+        }
+        
+        // Create datasets for each variant
+        for (const [variantName, distribution] of Object.entries(distributionData)) {
             // Determine color based on whether it's baseline or not
             let color;
             if (variantName === baselineVariant) {
@@ -881,9 +826,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 colorIndex++;
             }
             
+            // Add the distribution curve dataset
             datasets.push({
                 label: variantName,
-                data: kdePoints,
+                data: kdePointsMap[variantName],
                 borderColor: color,
                 backgroundColor: color.replace('0.7', '0.2'),
                 borderWidth: 2,
@@ -891,40 +837,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 fill: true,
                 tension: 0.4
             });
-            
-            // Find posterior mean for this variant
-            const variantData = window.lastAnalysisData?.revenue_per_sale_stats.find(v => v.variant === variantName);
-            let posteriorMean = null;
-            
-            if (variantData) {
-                if (variantData.posterior_mean !== undefined) {
-                    posteriorMean = variantData.posterior_mean;
-                } else {
-                    // If posterior_mean is not available, try to use avg_ticket from summary
-                    const summaryData = window.lastAnalysisData?.summary.find(v => v.variant === variantName);
-                    if (summaryData && summaryData.avg_ticket !== undefined) {
-                        posteriorMean = summaryData.avg_ticket;
-                    }
-                }
-            }
-            
-            if (posteriorMean !== null) {
-                // Add a vertical line dataset for the posterior mean
-                datasets.push({
-                    label: `${variantName} Mean`,
-                    data: [
-                        { x: posteriorMean, y: 0 },
-                        { x: posteriorMean, y: 50 } // Use a high value to ensure it spans the chart
-                    ],
-                    borderColor: color,
-                    borderWidth: 2,
-                    borderDash: [6, 4],
-                    pointRadius: 0,
-                    fill: false,
-                    tension: 0,
-                    showLine: true
-                });
-            }
         }
         
         // Create chart options
@@ -951,7 +863,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         display: true,
                         text: 'Density'
                     },
-                    beginAtZero: true
+                    beginAtZero: true,
+                    suggestedMax: maxDensity * 1.1
                 }
             },
             plugins: {
@@ -961,10 +874,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             const value = context[0].parsed.x;
                             return 'Revenue Per Sale: ' + value.toFixed(4);
                         }
-                    },
-                    filter: function(tooltipItem) {
-                        // Hide tooltips for the mean lines
-                        return !tooltipItem.dataset.label.includes('Mean');
                     }
                 },
                 legend: {
@@ -974,10 +883,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         boxWidth: 12,
                         font: {
                             size: 11
-                        },
-                        filter: function(legendItem, chartData) {
-                            // Hide the mean lines from the legend
-                            return !legendItem.text.includes('Mean');
                         }
                     }
                 },
@@ -995,7 +900,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             layout: {
                 padding: {
-                    top: 30,  // Add padding at the top for variant labels
+                    top: 30,
                     right: 10,
                     bottom: 10,
                     left: 10
@@ -1011,7 +916,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Create the chart
         try {
-            console.log('Creating Revenue Per Sale chart with options:', chartOptions);
             revenuePerSaleDistributionChartInstance = new Chart(revenuePerSaleDistributionChart, {
                 type: 'line',
                 data: {
