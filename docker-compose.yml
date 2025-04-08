@@ -11,6 +11,9 @@ services:
       - .:/app
     environment:
       - PYTHONPATH=/app
+      - LOG_LEVEL=DEBUG
+      - UVICORN_LOG_LEVEL=debug
+      - PYTHONUNBUFFERED=1
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]

@@ -89,8 +89,19 @@ def test_get_reports():
     ]
     experiment = WebsiteExperiment(variants=variants, baseline_variant="A")
     experiment.run(show=False)
-    df_summary, df_conv, df_arpu, df_rev_per_sale = experiment.get_reports()
+    (
+        df_summary,
+        df_conv,
+        df_arpu,
+        df_rev_per_sale,
+        conv_dist,
+        arpu_dist,
+        rev_per_sale_dist,
+    ) = experiment.get_reports()
     assert not df_summary.empty
     assert not df_conv.empty
     assert not df_arpu.empty
     assert not df_rev_per_sale.empty
+    assert conv_dist is not None
+    assert arpu_dist is not None
+    assert rev_per_sale_dist is not None

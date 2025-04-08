@@ -150,4 +150,37 @@ main {
 
 @keyframes spinner-border {
     to { transform: rotate(360deg); }
+}
+
+/* Chart styling */
+.chart-container {
+    margin: 0;
+    padding: 0.5rem;
+    padding-bottom: 4rem;  /* Increased from 3rem to 4rem */
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+}
+
+/* Distribution chart tooltip */
+#conversionDistributionChart {
+    max-height: 350px;
+}
+
+/* Table in side-by-side layout */
+.col-md-5 .table-responsive {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+/* Responsive chart adjustments */
+@media (max-width: 767.98px) {
+    .chart-container {
+        height: 300px !important;
+        margin-top: 1.5rem;
+    }
+    
+    .col-md-5 .table-responsive {
+        max-height: none;
+    }
 } 
